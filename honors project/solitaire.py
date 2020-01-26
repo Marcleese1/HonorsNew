@@ -8,7 +8,7 @@
 import math
 import random
 
-from tkinter import *
+from Tkinter import *
 from Canvas import Rectangle, CanvasText, Group, Window
 
 class Group(Group):
@@ -607,3 +607,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+#def neural_network():
