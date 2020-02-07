@@ -1,14 +1,9 @@
-#! /usr/bin/env python
-
-
-
-
 # Imports
 
 import math
 import random
 
-from Tkinter import *
+from tkinter import *
 from Canvas import Rectangle, CanvasText, Group, Window
 
 class Group(Group):
@@ -28,7 +23,7 @@ OFFSET = 5
 # we use something in between.  (There are a few more colors that
 # could be customized, but they are less controversial.)
 
-BACKGROUND = '#070'
+BACKGROUND = '#080'
 
 
 # Suits and colors.  The values of the symbolic suit names are the

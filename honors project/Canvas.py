@@ -4,7 +4,7 @@
 # It's best to use the Tkinter.Canvas class directly.
 
 
-from Tkinter import _cnfmerge, _flatten
+from tkinter import _cnfmerge, _flatten
 
 
 class CanvasItem:
