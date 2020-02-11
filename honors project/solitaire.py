@@ -500,6 +500,17 @@ class Solitaire:
                              width=NROWS*XSPACING,
                              height=3*YSPACING + 20 + MARGIN)
         self.canvas.pack(fill=BOTH, expand=TRUE)
+        
+        
+        self.playbutton = Button(self.canvas, 
+                                  text="play",
+                                  highlightthickness=0,
+                                  background=BACKGROUND,
+                                  activebackground="green",
+                                  command=self.deal)
+        Window(self.canvas, 5*MARGIN, 3*YSPACING + 20,
+               window=self.playbutton, anchor=SW)
+
 
         self.dealbutton = Button(self.canvas,
                                  text="Deal",
@@ -591,6 +602,7 @@ class Solitaire:
                 self.deck.add(card)
                 card.showback()
 
+#def neural_network():
 
 # Main function, run when invoked as a stand-alone Python program.
 
@@ -604,4 +616,3 @@ if __name__ == '__main__':
     main()
 
 
-#def neural_network():
