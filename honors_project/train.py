@@ -5,6 +5,7 @@ import torch.nn.functional as F
 #from envs import create_atari_env
 from app import ActorCritic
 from torch.autograd import Variable
+import gym
 
 def ensure_shared_grade(model, shared_model):
     for param, shared_param in zip(model.parameters(), shared_model.parameters()):
@@ -14,7 +15,7 @@ def ensure_shared_grade(model, shared_model):
 
 def train(rank, params, shared_model, optimiser):
     torch.manual_seed(params.seed + rank)
-    env = "solitaire.py"#create_atari_env(params.env_name)
+    env = gym.make('solitaire.py')#create_atari_env(params.env_name)
     env.seed(params.seed + rank)
     model = ActorCritic(env.observation_space.shape[0], env.action_space)
     state = env.reset()
@@ -43,7 +44,7 @@ def train(rank, params, shared_model, optimiser):
             action = prob.multinomial().data
             log_prob = log_prob.gather(1, Variable(action))
             values.append(value)
-            log_probs.append(log_prob)
+            log_prob.append(log_prob)
             state, reward, done = env.step(action.numpy())
             done = (done or episode_length > params.max_episode_length)
             reward = max(min(reward, 1), -1)
@@ -67,13 +68,13 @@ def train(rank, params, shared_model, optimiser):
             R = params.gamma * R + rewards[i]
             advantage = R - values[i]
             value_loss = value_loss + 0.5 * advantage.pow(2)
-            TD = rewards[i] + params.gamma * values[i+1].data - walues[i].data
+            TD = rewards[i] + params.gamma * values[i+1].data - values[i].data
             gae = gae * params.gamma * params.tau + TD
-            policy_loss = policy_loss - log_probs[i] * Variable(gae) - 0.01 * entropies[i]
+            policy_loss = policy_loss - log_prob[i] * Variable(gae) - 0.01 * entropies[i]
         optimiser.zero_grad()
         (policy_loss + 0.5 * value_loss). backward()
         torch.nn.utils.clip_grad_norm(model.parameters(), 40)
-        ensure_shared_grad(model, shared_model)
+        ensure_shared_grade(model, shared_model)
         optimiser.step()
         
                 

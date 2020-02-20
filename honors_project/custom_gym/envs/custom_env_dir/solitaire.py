@@ -507,7 +507,7 @@ class Solitaire:
                                   highlightthickness=0,
                                   background=BACKGROUND,
                                   activebackground="green",
-                                  command=self.deal)
+                                  command=self.step)
         Window(self.canvas, 5*MARGIN, 3*YSPACING + 20,
                window=self.playbutton, anchor=SW)
 
@@ -601,6 +601,9 @@ class Solitaire:
                     break
                 self.deck.add(card)
                 card.showback()
+                
+    def step(self):
+        print("This is to test the step function")
 
 #def neural_network():
 
