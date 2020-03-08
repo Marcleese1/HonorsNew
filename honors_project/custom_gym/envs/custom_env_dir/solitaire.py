@@ -294,7 +294,7 @@ class Stack:
             self.position(card)
 
     # Event handlers
-
+   
     def clickhandler(self, event):
         self.finishmoving()             # In case we lost an event
         self.userclickhandler()
@@ -508,7 +508,7 @@ class Solitaire:
                                   background=BACKGROUND,
                                   activebackground="green",
                                   command=self.step)
-        Window(self.canvas, 5*MARGIN, 3*YSPACING + 20,
+        Window(self.canvas, 8*MARGIN, 3*YSPACING + 20,
                window=self.playbutton, anchor=SW)
 
 
@@ -601,9 +601,28 @@ class Solitaire:
                     break
                 self.deck.add(card)
                 card.showback()
+                self.fails = 0
+    
+    def step(self, action=None):
+        #score = self.score
+        terminal = False
+
+        if self.fails >= 20:
+            terminal = True
+        elif not action:
+            pass
+        elif action == 'up':
+            self.up()
+        elif action == 'down':
+            self.down()
+        elif action == 'left':
+            self.left()
+        elif action == 'right':
+            self.right()
+        elif action == 'select':
+            self.select()
                 
-    def step(self):
-        print("This is to test the step function")
+    
 
 #def neural_network():
 
