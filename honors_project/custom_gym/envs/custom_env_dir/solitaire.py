@@ -608,7 +608,7 @@ class Solitaire:
         terminal = False
 
         if self.fails >= 20:
-            terminal = True
+            reset()
         elif not action:
             pass
         elif action == 'up':

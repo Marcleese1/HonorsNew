@@ -15,7 +15,7 @@ def ensure_shared_grade(model, shared_model):
 
 def train(rank, params, shared_model, optimiser):
     torch.manual_seed(params.seed + rank)
-    env = gym.make('solitaire.py')#create_atari_env(params.env_name)
+    env = gym.make('SolitaireEnv-v0')#create_atari_env(params.env_name)
     env.seed(params.seed + rank)
     model = ActorCritic(env.observation_space.shape[0], env.action_space)
     state = env.reset()
