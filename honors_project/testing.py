@@ -1,8 +1,7 @@
-
 import gym
 import torch
 import torch.nn.functional as F
-from envs import Register
+from envs import register
 from app import ActorCritic
 from torch.autograd import Variable
 import time
@@ -10,7 +9,7 @@ from collections import deque
 
 def Testing (rank, params, shared_model):
     torch.manual_seed(params.seed + rank)
-    env = Register(params.env_name, video=True)
+    env = register(params.env_name)
     env.seed(params.seed + rank)
     model = ActorCritic(env.observation_space.shape[0], env.action_space)
     model.eval()

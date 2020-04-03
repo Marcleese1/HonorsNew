@@ -69,6 +69,5 @@ class ActorCritic(torch.nn.Module):
         
         return self.critic_linear(x), self.actor_Linear(x), (hx, cx)
     
-    
-        
+      
         

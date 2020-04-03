@@ -2,6 +2,7 @@
 
 import math
 import random
+import gym
 
 from tkinter import *
 from Canvas import Rectangle, CanvasText, Group, Window
@@ -181,7 +182,7 @@ class Card:
         self.face_shown = 0
 
 
-class Stack:
+class Stack(gym.Env):
 
     """A generic stack of cards.
 
@@ -501,16 +502,6 @@ class Solitaire:
                              height=3*YSPACING + 20 + MARGIN)
         self.canvas.pack(fill=BOTH, expand=TRUE)
         
-        
-        self.playbutton = Button(self.canvas, 
-                                  text="play",
-                                  highlightthickness=0,
-                                  background=BACKGROUND,
-                                  activebackground="green",
-                                  command=self.step)
-        Window(self.canvas, 8*MARGIN, 3*YSPACING + 20,
-               window=self.playbutton, anchor=SW)
-
 
         self.dealbutton = Button(self.canvas,
                                  text="Deal",

@@ -15,7 +15,7 @@ def ensure_shared_grade(model, shared_model):
 
 def train(rank, params, shared_model, optimiser):
     torch.manual_seed(params.seed + rank)
-    env = gym.make('SolitaireEnv-v0')#create_atari_env(params.env_name)
+    env = gym.make('SolitaireEnv-v1')#create_atari_env(params.env_name)
     env.seed(params.seed + rank)
     model = ActorCritic(env.observation_space.shape[0], env.action_space)
     state = env.reset()
@@ -25,6 +25,7 @@ def train(rank, params, shared_model, optimiser):
     while True:
         episode_length += 1
         model.load_state_dict(shared_model.state_dict())
+        
         if done:
             cx = Variable(torch.zeros(1, 256))
             hx = Variable(torch.zeros(1, 256))
@@ -35,6 +36,7 @@ def train(rank, params, shared_model, optimiser):
         log_prob = []
         rewards = []
         entropies = []
+        
         for step in range(params.num_steps):
             value, action_values, (hx, cx) = model((Variable(state.unsqueeze(0)), (hx, cx)))
             prob = F.softmax(action_values)
@@ -56,6 +58,7 @@ def train(rank, params, shared_model, optimiser):
             if done:
                 break
         R = torch.zeroes(1, 1)
+        
         if not done:
             value, _, _ = model((Variable(state.unsqueeze(0)), (hx, cx)))
             R = value.data
@@ -64,6 +67,7 @@ def train(rank, params, shared_model, optimiser):
         value_loss = 0
         R = Variable(R)
         gae = torch.zeroes(1, 1)
+        
         for  i in reversed(range(len(rewards))):
             R = params.gamma * R + rewards[i]
             advantage = R - values[i]

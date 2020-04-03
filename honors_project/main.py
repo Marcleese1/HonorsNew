@@ -10,14 +10,16 @@ from __future__ import print_function
 import os
 import torch
 import torch.multiprocessing as sp
-from envs import Register
+from envs import __init__
 from app import ActorCritic
 from testing import Testing
 from train import train
 import Optimiser
+import gym
 
 class Params():
     def __init__(self):
+        #master = self.master
         self.lr = 0.001
         self.gamma = 0.99
         self.tau = 1.
@@ -25,12 +27,14 @@ class Params():
         self.num_processes = 16
         self.num_step = 20
         self.max_episode_length = 10000
-        self.env_name = 'SolitaireEnv-v0'
+        self.env_name = 'SolitaireEnv-v1'
+
         
+#master = __init__.master
 os.environ['OMP_NUM_THREADS'] = '1'
 params = Params()
 torch.manual_seed(params.seed)
-env = Register(params.env_name)
+env = gym.make(params.env_name)
 shared_model = ActorCritic(env.observation_space.shape[0], env.action_space)
 shared_model.shared_memory()
 optimiser = Optimiser.SharedAdam(shared_model.parameters(), lr=params.lr)
