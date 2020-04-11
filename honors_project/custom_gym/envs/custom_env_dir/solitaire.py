@@ -495,7 +495,7 @@ class Solitaire:
     def __init__(self, master):
         self.master = master
 
-        self.canvas = Canvas(self.master,
+        self.canvas = Canvas(master,
                              background=BACKGROUND,
                              highlightthickness=0,
                              width=NROWS*XSPACING,

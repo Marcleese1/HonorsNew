@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+import nvvl
 
 def nomalized_columns_initializer(weights, std = 1.0):
     out = torch.randn(weights.size())
@@ -67,6 +67,11 @@ class ActorCritic(torch.nn.Module):
         (hx, cx) = self.lstm(x, (hx, cx))
         x = hx
         
+        
+    def dataLoader():
+    filenames = ["game1.mkv", "game2.mkv", "game3.mkv", "game4.mkv", "game5.mkv", "game6.mkv", "game7.mkv", "game8.mkv", "game9.mkv", "game10.mkv"]
+    dateset = nvvl.VideoDataset(filenames, sequence_length=5)
+    
         return self.critic_linear(x), self.actor_Linear(x), (hx, cx)
     
       

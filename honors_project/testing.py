@@ -1,7 +1,7 @@
 import gym
 import torch
 import torch.nn.functional as F
-from envs import register
+from custom_gym.envs import register
 from app import ActorCritic
 from torch.autograd import Variable
 import time

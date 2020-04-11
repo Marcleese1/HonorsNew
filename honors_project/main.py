@@ -10,16 +10,21 @@ from __future__ import print_function
 import os
 import torch
 import torch.multiprocessing as sp
+from custom_gym.envs.custom_env_dir import solitaire as sol
 from envs import __init__
 from app import ActorCritic
 from testing import Testing
 from train import train
+from gym.envs.registration import EnvSpec as env
+from gym.envs.registration import EnvRegistry as envreg
 import Optimiser
 import gym
 
-class Params():
-    def __init__(self):
-        #master = self.master
+
+
+class Params:
+    def __init__(self, master=None):
+        self.master = None
         self.lr = 0.001
         self.gamma = 0.99
         self.tau = 1.
@@ -27,14 +32,15 @@ class Params():
         self.num_processes = 16
         self.num_step = 20
         self.max_episode_length = 10000
-        self.env_name = 'SolitaireEnv-v1'
-
+        self.env_id = 'SolitaireEnv-v1'
         
-#master = __init__.master
+        
+
+master = Params()        
 os.environ['OMP_NUM_THREADS'] = '1'
-params = Params()
+params = Params(master)
 torch.manual_seed(params.seed)
-env = gym.make(params.env_name)
+env = gym.make(params.env_id)
 shared_model = ActorCritic(env.observation_space.shape[0], env.action_space)
 shared_model.shared_memory()
 optimiser = Optimiser.SharedAdam(shared_model.parameters(), lr=params.lr)
