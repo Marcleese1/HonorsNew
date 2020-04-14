@@ -68,11 +68,11 @@ class ActorCritic(torch.nn.Module):
         x = hx
         
         
-    def dataLoader():
-    filenames = ["game1.mkv", "game2.mkv", "game3.mkv", "game4.mkv", "game5.mkv", "game6.mkv", "game7.mkv", "game8.mkv", "game9.mkv", "game10.mkv"]
-    dateset = nvvl.VideoDataset(filenames, sequence_length=5)
-    
         return self.critic_linear(x), self.actor_Linear(x), (hx, cx)
+        
+        
+
+    
     
       
         

@@ -41,7 +41,7 @@ os.environ['OMP_NUM_THREADS'] = '1'
 params = Params(master)
 torch.manual_seed(params.seed)
 env = gym.make(params.env_id)
-shared_model = ActorCritic(env.observation_space.shape[0], env.action_space)
+shared_model = ActorCritic(env.dataLoader().filenames[0], env.action_space)
 shared_model.shared_memory()
 optimiser = Optimiser.SharedAdam(shared_model.parameters(), lr=params.lr)
 optimiser.shared_memory()
