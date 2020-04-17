@@ -1,50 +1,23 @@
-from gym.envs.registration import register
-import gym
-import custom_gym.envs.custom_env_dir.solitaire as sol
-#from solitaire import Solitaire
-import torch
-import torchvision
-import torchvision.transforms as transforms
+# Improvement of the Gym environment with universe
+
+
 import cv2
+import gym
 import numpy as np
 from gym.spaces.box import Box
 from gym import wrappers
 
-class MyEnv(gym.core.Env):
-    
-    def create_atari_env(env_id, video=False):
-        env = gym.make(env_id)
-        if video:
-            env = wrappers.Monitor(env, 'test', force=True)
-            env = MyAtariRescale42x42(env)
-            env = MyNormalizedEnv(env)
-            return env
-
-
-
-
-
-# delete if it's registered
-env_name = 'SolitaireEnv-v1'
-if env_name in gym.envs.registry.env_specs:
-   del gym.envs.registry.env_specs[env_name]
-
-# register the environment so we can play with it
-gym.register(
-    id=env_name,
-    entry_point=MyEnv,
-    max_episode_steps=999,
-    reward_threshold=90.0,
-)
-
-
-# Improvement of the Gym environment with universe
-
-
-
-
 
 # Taken from https://github.com/openai/universe-starter-agent
+
+
+def create_atari_env(env_id, video=False):
+    env = gym.make(env_id)
+    if video:
+        env = wrappers.Monitor(env, 'test', force=True)
+    env = MyAtariRescale42x42(env)
+    env = MyNormalizedEnv(env)
+    return env
 
 
 def _process_frame42(frame):
@@ -57,7 +30,7 @@ def _process_frame42(frame):
     frame = frame.mean(2)
     frame = frame.astype(np.float32)
     frame *= (1.0 / 255.0)
-    #frame = np.reshape(frame, [1, 42, 42])
+    frame = np.reshape(frame, [1, 42, 42])
     return frame
 
 
