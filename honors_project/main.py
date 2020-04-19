@@ -12,11 +12,13 @@ from __future__ import print_function
 import os
 import torch
 import torch.multiprocessing as mp
-from envs import create_atari_env
+from custom_gym.envs import create_atari_env
 from app import ActorCritic
 from train import train
 from testing import Testing
 import Optimiser
+import tkinter 
+
 
 # Gathering all the parameters (that we can modify to explore)
 class Params():
@@ -28,7 +30,9 @@ class Params():
         self.num_processes = 16
         self.num_steps = 20
         self.max_episode_length = 10000
-        self.env_name = 'SolitaireEnv-v1'
+        self.env_name = 'SolitaireEnv-v2'
+        
+
 
 # Main run
 os.environ['OMP_NUM_THREADS'] = '1' # 1 thread per core

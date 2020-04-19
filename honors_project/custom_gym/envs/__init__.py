@@ -12,30 +12,32 @@ from gym import wrappers
 
 class MyEnv(gym.core.Env):
     
-    def create_atari_env(env_id, video=False):
-        env = gym.make(env_id)
-        if video:
-            env = wrappers.Monitor(env, 'test', force=True)
-            env = MyAtariRescale42x42(env)
-            env = MyNormalizedEnv(env)
-            return env
+    
+    pass
 
 
 
 
 
 # delete if it's registered
-env_name = 'SolitaireEnv-v1'
-if env_name in gym.envs.registry.env_specs:
-   del gym.envs.registry.env_specs[env_name]
+
 
 # register the environment so we can play with it
-gym.register(
-    id=env_name,
-    entry_point=MyEnv,
-    max_episode_steps=999,
-    reward_threshold=90.0,
-)
+env_name = 'SolitaireEnv'
+
+
+name = '{}-ram'.format(env_name)
+for env in gym.envs.registry.env_specs:
+          if 'SolitaireEnv-v2' in env:
+              del gym.envs.registry.env_specs[env]
+              
+register(
+              id='{}-v2'.format(env_name),
+              entry_point='custom_gym.envs.custom_env_dir.solitaire:Solitaire',
+              #kwargs={'game': game, 'obs_type': obs_type, 'repeat_action_probability': 0.25},
+              max_episode_steps=10000,
+              )
+
 
 
 # Improvement of the Gym environment with universe
@@ -43,9 +45,15 @@ gym.register(
 
 
 
-
 # Taken from https://github.com/openai/universe-starter-agent
 
+def create_atari_env(env_id, video=True):
+    env = gym.make(env_id)
+    if video:
+        env = wrappers.Monitor(env, 'test', force=True)
+        env = MyAtariRescale42x42(env)
+        env = MyNormalizedEnv(env)
+    return env
 
 def _process_frame42(frame):
     frame = frame[34:34 + 160, :160]

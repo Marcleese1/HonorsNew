@@ -3,9 +3,18 @@
 import math
 import random
 import gym
-
+#import os
 from tkinter import *
 from Canvas import Rectangle, CanvasText, Group, Window
+import numpy as np
+import cv2
+import torch.nn as nn
+from gym import spaces
+from gym import utils
+from gym.utils import seeding
+#from .ale_python_interface import *
+import atari_py
+from atari_py import ALEInterface
 
 class Group(Group):
    def bind(self, sequence=None, command=None):
@@ -78,6 +87,7 @@ NROWS = 7
 
 # The rest of the program consists of class definitions.  These are
 # further described in their documentation strings.
+
 
 
 class Card:
@@ -182,7 +192,7 @@ class Card:
         self.face_shown = 0
 
 
-class Stack(gym.Env):
+class Stack:
 
     """A generic stack of cards.
 
@@ -490,12 +500,26 @@ class RowStack(OpenStack):
         card.moveto(self.x, y)
 
 
-class Solitaire:
 
-    def __init__(self, master):
+def to_ram(ale):
+    ram_size = ale.getRAMSize()
+    ram = np.zeros((ram_size), dtype=np.uint8)
+    ale.getRAM(ram)
+    return ram
+
+class Solitaire(gym.Env):
+
+    def __init__(self):
+        master = None
+#        game
+        obs_type='ram'
+        frameskip=(2, 5)
+        repeat_action_probability=0
+        full_action_space=False
         self.master = master
+#        self.game_path = atari_py.get_game_path(game)
 
-        self.canvas = Canvas(master,
+        self.canvas = Canvas(self.master,
                              background=BACKGROUND,
                              highlightthickness=0,
                              width=NROWS*XSPACING,
@@ -538,6 +562,18 @@ class Solitaire:
 
         self.deck.fill()
         self.deal()
+
+        self._obs_type = obs_type
+        self.frameskip = frameskip
+        self.ale = atari_py.ALEInterface()
+        self.viewer = None
+
+        # Tune (or disable) ALE's action repeat:
+        # https://github.com/openai/gym/issues/349
+        self._action_set = (self.ale.getLegalActionSet() if full_action_space
+                            else self.ale.getMinimalActionSet())
+        self.action_space = spaces.Discrete(len(self._action_set))
+       
 
     def wincheck(self):
         for s in self.suits:
@@ -621,7 +657,7 @@ class Solitaire:
 
 def main():
     root = Tk()
-    game = Solitaire(root)
+    game = Solitaire()
     root.protocol('WM_DELETE_WINDOW', root.quit)
     root.mainloop()
 

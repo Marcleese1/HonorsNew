@@ -26,13 +26,13 @@ class Params:
         self.num_processes = 16
         self.num_step = 20
         self.max_episode_length = 10000
-        self.env_id = 'SolitaireEnv-v1'
+        self.env_id = 'SolitaireEnv-v2'
         
         
 
-master = Params()        
+       
 os.environ['OMP_NUM_THREADS'] = '1'
-params = Params(master)
+params = Params()
 torch.manual_seed(params.seed)
 env = create_atari_env(params.env_id)
 shared_model = ActorCritic(env.observation_space.shape[0], env.action_space)
