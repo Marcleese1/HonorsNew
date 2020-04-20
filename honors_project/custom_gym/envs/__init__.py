@@ -9,6 +9,9 @@ import cv2
 import numpy as np
 from gym.spaces.box import Box
 from gym import wrappers
+from gym import spaces
+from gym.envs.atari.atari_env import AtariEnv
+
 
 class MyEnv(gym.core.Env):
     
@@ -25,14 +28,12 @@ class MyEnv(gym.core.Env):
 # register the environment so we can play with it
 env_name = 'SolitaireEnv'
 
-
-name = '{}-ram'.format(env_name)
 for env in gym.envs.registry.env_specs:
-          if 'SolitaireEnv-v2' in env:
+          if 'SolitaireEnv-v1' in env:
               del gym.envs.registry.env_specs[env]
               
 register(
-              id='{}-v2'.format(env_name),
+              id='SolitaireEnv-v1',
               entry_point='custom_gym.envs.custom_env_dir.solitaire:Solitaire',
               #kwargs={'game': game, 'obs_type': obs_type, 'repeat_action_probability': 0.25},
               max_episode_steps=10000,
@@ -47,13 +48,15 @@ register(
 
 # Taken from https://github.com/openai/universe-starter-agent
 
-def create_atari_env(env_id, video=True):
+def create_atari_env(env_id, video=False):
+  
     env = gym.make(env_id)
     if video:
         env = wrappers.Monitor(env, 'test', force=True)
         env = MyAtariRescale42x42(env)
         env = MyNormalizedEnv(env)
     return env
+
 
 def _process_frame42(frame):
     frame = frame[34:34 + 160, :160]
@@ -83,6 +86,7 @@ class MyNormalizedEnv(gym.ObservationWrapper):
 
     def __init__(self, env=None):
         super(MyNormalizedEnv, self).__init__(env)
+        self.ale = atari_py.ALEInterface()
         self.state_mean = 0
         self.state_std = 0
         self.alpha = 0.9999

@@ -3,7 +3,9 @@
 import math
 import random
 import gym
-#import os
+import atari_py
+from atari_py import ALEInterface
+import os
 from tkinter import *
 from Canvas import Rectangle, CanvasText, Group, Window
 import numpy as np
@@ -13,8 +15,8 @@ from gym import spaces
 from gym import utils
 from gym.utils import seeding
 #from .ale_python_interface import *
-import atari_py
-from atari_py import ALEInterface
+
+
 
 class Group(Group):
    def bind(self, sequence=None, command=None):
@@ -507,17 +509,44 @@ def to_ram(ale):
     ale.getRAM(ram)
     return ram
 
-class Solitaire(gym.Env):
+class Solitaire(gym.Env, utils.EzPickle):
 
     def __init__(self):
         master = None
-#        game
+        game='pong'
         obs_type='ram'
         frameskip=(2, 5)
         repeat_action_probability=0
-        full_action_space=False
+        full_action_space=True
         self.master = master
 #        self.game_path = atari_py.get_game_path(game)
+
+        utils.EzPickle.__init__(
+                self,
+                game,
+                obs_type,
+                frameskip,
+                repeat_action_probability)
+        assert obs_type in ('ram', 'image')
+        
+        full_action_space = True
+        self.ale = atari_py.ALEInterface()
+        self.viewer = None
+
+        # Tune (or disable) ALE's action repeat:
+        # https://github.com/openai/gym/issues/349
+        #assert isinstance(repeat_action_probability, (float, int)), \
+         #       "Invalid repeat_action_probability: {!r}".format(repeat_action_probability)
+        #self.ale.setFloat(
+          #      'repeat_action_probability'.encode('utf-8'),
+         #       repeat_action_probability)
+
+        #self.seed()
+        #if full_action_space:
+         #   self._action_set = self.ale.getLegalActionSet() 
+        #else: 
+         #   self._action_set = self.ale.getMinimalActionSet()
+        #self.action_space = spaces.Discrete(len(self._action_set))
 
         self.canvas = Canvas(self.master,
                              background=BACKGROUND,
@@ -563,17 +592,6 @@ class Solitaire(gym.Env):
         self.deck.fill()
         self.deal()
 
-        self._obs_type = obs_type
-        self.frameskip = frameskip
-        self.ale = atari_py.ALEInterface()
-        self.viewer = None
-
-        # Tune (or disable) ALE's action repeat:
-        # https://github.com/openai/gym/issues/349
-        self._action_set = (self.ale.getLegalActionSet() if full_action_space
-                            else self.ale.getMinimalActionSet())
-        self.action_space = spaces.Discrete(len(self._action_set))
-       
 
     def wincheck(self):
         for s in self.suits:

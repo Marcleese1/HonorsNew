@@ -30,7 +30,7 @@ class Params():
         self.num_processes = 16
         self.num_steps = 20
         self.max_episode_length = 10000
-        self.env_name = 'SolitaireEnv-v2'
+        self.env_name = 'SolitaireEnv-v1'
         
 
 
