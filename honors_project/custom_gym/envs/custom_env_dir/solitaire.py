@@ -6,14 +6,22 @@ import gym
 import atari_py
 from atari_py import ALEInterface
 import os
+import os.path
 from tkinter import *
 from Canvas import Rectangle, CanvasText, Group, Window
 import numpy as np
 import cv2
 import torch.nn as nn
+import torchvision
+import torchvision.datasets as dset
+import torchvision.transforms as transforms
+import Images.training as images
+import torch
 from gym import spaces
-from gym import utils
-from gym.utils import seeding
+
+
+from pathlib import Path
+
 #from .ale_python_interface import *
 
 
@@ -511,38 +519,28 @@ def to_ram(ale):
 
 class Solitaire(gym.Env):
 
-    def __init__(self, data_root):
+    def __init__(self):
+
         master = None
         self.master = master
 #        self.game_path = atari_py.get_game_path(game)
         #self.seed()
         
-        self.samples = []
         
-
-        for race in os.listdir(data_root):
-            race_folder = os.path.join(data_root, race)
-
-            for gender in os.listdir(race_folder):
-                gender_filepath = os.path.join(race_folder, gender)
-
-                with open(gender_filepath, 'r') as gender_file:
-                    for name in gender_file.read().splitlines():
-                        self.samples.append((race, gender, name))
-
-    def __len__(self):
-        return len(self.samples)
-
-    def __getitem__(self, idx):
-        return self.samples[idx]
-        self.action_space = spaces.Discrete(2)
-        self.observation_space = spaces.Tuple((
-            spaces.Discrete(256),
-            spaces.Discrete(128),
-            spaces.Discrete(64)))
-        self.seed()
-
-
+        data_path = 'Images/'
+        dir_path = os.path.join(data_path)
+        train_dataset = torchvision.datasets.ImageFolder(
+            root=dir_path,
+            transform=torchvision.transforms.ToTensor()
+            )
+        for img in os.listdir(dir_path):
+            img_array = cv2.imread(os.path.join(dir_path, img), cv2.IMREAD_COLOR)
+            #print(" Image shape : ", img_array.shape)
+            #plt.imshow(img_array)
+            #plt.show()
+        self.action_space = spaces.Discrete(256) 
+        self.observation_space = spaces.Box(low=0, high=255, shape=
+        (512, 512, 4), dtype=np.uint8)
         self.canvas = Canvas(self.master,
                              background=BACKGROUND,
                              highlightthickness=0,
@@ -587,6 +585,11 @@ class Solitaire(gym.Env):
         self.deck.fill()
         self.deal()
 
+
+
+
+    #for batch_idx, (data, target) in enumerate(load_dataset()):
+       
 
     def wincheck(self):
         for s in self.suits:
@@ -651,7 +654,7 @@ class Solitaire(gym.Env):
             reset()
         elif not action:
             pass
-        elif action == 'up':
+        elif action == 'move':
             self.up()
         elif action == 'down':
             self.down()
@@ -670,13 +673,11 @@ class Solitaire(gym.Env):
 
 def main():
     root = Tk()
-    game = Solitaire(root)
+    game = Solitaire()
     root.protocol('WM_DELETE_WINDOW', root.quit)
     root.mainloop()
 
-if __name__ == '__main__':
-    from torch.utils.data import DataLoader
-    dataset = Solitaire('home/marc/HonorsNew/honors_project/Images/')    
+if __name__ == '__main__': 
     main()
 
 

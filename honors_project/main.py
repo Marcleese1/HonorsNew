@@ -18,6 +18,9 @@ from train import train
 from testing import Testing
 import Optimiser
 import tkinter 
+from gym import utils
+from gym.utils import seeding
+
 
 
 # Gathering all the parameters (that we can modify to explore)
@@ -31,7 +34,10 @@ class Params():
         self.num_steps = 20
         self.max_episode_length = 10000
         self.env_name = 'SolitaireEnv-v1'
-        
+        self.samples = []
+
+      
+
 
 
 # Main run

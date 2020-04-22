@@ -12,6 +12,8 @@ def ensure_shared_grade(model, shared_model):
         if shared_param.grad is not None:
             return
         shared_param._grad = param.grad
+        
+
 
 def train(rank, params, shared_model, optimiser):
     torch.manual_seed(params.seed + rank)
@@ -27,8 +29,8 @@ def train(rank, params, shared_model, optimiser):
         model.load_state_dict(shared_model.state_dict())
         
         if done:
-            cx = Variable(torch.zeros(1, 256))
-            hx = Variable(torch.zeros(1, 256))
+            cx = Variable(torch.zeros(1, 910))
+            hx = Variable(torch.zeros(1, 910))
             #data = '/Images'
         else:
             cx = Variable(cx.data)
