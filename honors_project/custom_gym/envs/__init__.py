@@ -13,20 +13,12 @@ from gym import spaces
 from gym.envs.atari.atari_env import AtariEnv
 
 
-class MyEnv(gym.core.Env):
-    
-    
-    pass
-
-
-
-
 
 # delete if it's registered
 
 
 # register the environment so we can play with it
-env_name = 'SolitaireEnv'
+
 
 for env in gym.envs.registry.env_specs:
           if 'SolitaireEnv-v1' in env:
@@ -86,7 +78,7 @@ class MyNormalizedEnv(gym.ObservationWrapper):
 
     def __init__(self, env=None):
         super(MyNormalizedEnv, self).__init__(env)
-        self.ale = atari_py.ALEInterface()
+        #self.ale = atari_py.ALEInterface()
         self.state_mean = 0
         self.state_std = 0
         self.alpha = 0.9999

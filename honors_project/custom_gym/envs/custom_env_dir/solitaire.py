@@ -509,44 +509,39 @@ def to_ram(ale):
     ale.getRAM(ram)
     return ram
 
-class Solitaire(gym.Env, utils.EzPickle):
+class Solitaire(gym.Env):
 
-    def __init__(self):
+    def __init__(self, data_root):
         master = None
-        game='pong'
-        obs_type='ram'
-        frameskip=(2, 5)
-        repeat_action_probability=0
-        full_action_space=True
         self.master = master
 #        self.game_path = atari_py.get_game_path(game)
-
-        utils.EzPickle.__init__(
-                self,
-                game,
-                obs_type,
-                frameskip,
-                repeat_action_probability)
-        assert obs_type in ('ram', 'image')
-        
-        full_action_space = True
-        self.ale = atari_py.ALEInterface()
-        self.viewer = None
-
-        # Tune (or disable) ALE's action repeat:
-        # https://github.com/openai/gym/issues/349
-        #assert isinstance(repeat_action_probability, (float, int)), \
-         #       "Invalid repeat_action_probability: {!r}".format(repeat_action_probability)
-        #self.ale.setFloat(
-          #      'repeat_action_probability'.encode('utf-8'),
-         #       repeat_action_probability)
-
         #self.seed()
-        #if full_action_space:
-         #   self._action_set = self.ale.getLegalActionSet() 
-        #else: 
-         #   self._action_set = self.ale.getMinimalActionSet()
-        #self.action_space = spaces.Discrete(len(self._action_set))
+        
+        self.samples = []
+        
+
+        for race in os.listdir(data_root):
+            race_folder = os.path.join(data_root, race)
+
+            for gender in os.listdir(race_folder):
+                gender_filepath = os.path.join(race_folder, gender)
+
+                with open(gender_filepath, 'r') as gender_file:
+                    for name in gender_file.read().splitlines():
+                        self.samples.append((race, gender, name))
+
+    def __len__(self):
+        return len(self.samples)
+
+    def __getitem__(self, idx):
+        return self.samples[idx]
+        self.action_space = spaces.Discrete(2)
+        self.observation_space = spaces.Tuple((
+            spaces.Discrete(256),
+            spaces.Discrete(128),
+            spaces.Discrete(64)))
+        self.seed()
+
 
         self.canvas = Canvas(self.master,
                              background=BACKGROUND,
@@ -648,7 +643,7 @@ class Solitaire(gym.Env, utils.EzPickle):
                 card.showback()
                 self.fails = 0
     
-    def step(self, action=None):
+    def step(self, action):
         #score = self.score
         terminal = False
 
@@ -675,11 +670,13 @@ class Solitaire(gym.Env, utils.EzPickle):
 
 def main():
     root = Tk()
-    game = Solitaire()
+    game = Solitaire(root)
     root.protocol('WM_DELETE_WINDOW', root.quit)
     root.mainloop()
 
 if __name__ == '__main__':
+    from torch.utils.data import DataLoader
+    dataset = Solitaire('home/marc/HonorsNew/honors_project/Images/')    
     main()
 
 

@@ -2,7 +2,7 @@
 
 import torch
 import torch.nn.functional as F
-#from envs import create_atari_env
+from custom_gym.envs import create_atari_env
 from app import ActorCritic
 from torch.autograd import Variable
 import gym
@@ -15,7 +15,7 @@ def ensure_shared_grade(model, shared_model):
 
 def train(rank, params, shared_model, optimiser):
     torch.manual_seed(params.seed + rank)
-    env = gym.make('SolitaireEnv-v1')#create_atari_env(params.env_name)
+    env = create_atari_env(params.env_name)
     env.seed(params.seed + rank)
     model = ActorCritic(env.observation_space.shape[0], env.action_space)
     state = env.reset()
@@ -29,6 +29,7 @@ def train(rank, params, shared_model, optimiser):
         if done:
             cx = Variable(torch.zeros(1, 256))
             hx = Variable(torch.zeros(1, 256))
+            #data = '/Images'
         else:
             cx = Variable(cx.data)
             hx = Variable(hx.data)
